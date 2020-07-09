@@ -20,7 +20,7 @@ See the examples provided in "rnn_experiments.sh" for more details.
 The forecasts and errors will be stored in ./results/forecasts and ./results/errors folders respectively.
 
 ## Execute the Proposed Baseline Model
-You can directly execute the exepriments, once you have obtained the RNN forecasts.
-The exepriments are executed using the functions implemented in "weekly_experiments.R". It will calculate the forecasts of the remaining 3 sub-models and optimally combine all the sub-model forecasts using lasso regression.
+You can directly execute the exepriments related to the proposed baseline model, once you have obtained the RNN forecasts.
+The exepriments are executed using the functions implemented in "weekly_experiments.R". It will calculate the forecasts of the remaining 3 sub-models and optimally combine all sub-model forecasts using lasso regression.
 You can provide different options when executing models. E.g. training the lasso model with and without series features, transforming sub-model forecasts into log scale before training etc.
 See the examples provided in "weekly_experiments.R" file for more details. 
