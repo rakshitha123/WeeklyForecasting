@@ -27,14 +27,18 @@ See the examples provided in "weekly_experiments.R" file for more details.
 
 
 # Experimental Datasets
-The experimental weekly datasets are available in the Google Drive folder at this [https://drive.google.com/drive/folders/109-ZYZAHQU1YLQfVLDnpgT4MRX_CqINH?usp=sharing](link)
+The experimental weekly datasets are available in the Google Drive folder at this [link](https://drive.google.com/drive/folders/109-ZYZAHQU1YLQfVLDnpgT4MRX_CqINH?usp=sharing)
 
 
 # Citing Our Work
 When using this repository, please cite:
 
+```{r} 
 @article{godahewa2020weekly,
   title={Weekly Time Series Forecasting: A Strong Baseline},
   author={Godahewa, Rakshitha and Bergmeir, Christoph and Webb, Geoff and Montero-Manso, Pablo},
   year={2020}
 }
+```
+
+
