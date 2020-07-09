@@ -23,4 +23,18 @@ The forecasts and errors will be stored in ./results/forecasts and ./results/err
 You can directly execute the exepriments related to the proposed baseline model, once you have obtained the RNN forecasts.
 The exepriments are executed using the functions implemented in "weekly_experiments.R". It will calculate the forecasts of the remaining 3 sub-models, optimally combine all sub-model forecasts using lasso regression and calculate errors for the generated forecasts.
 You can provide different options when executing models. E.g. training the lasso model with and without series features, transforming sub-model forecasts into log scale before training etc.
-See the examples provided in "weekly_experiments.R" file for more details. 
+See the examples provided in "weekly_experiments.R" file for more details.
+
+
+# Experimental Datasets
+The experimental weekly datasets are available in the Google Drive folder at this [https://drive.google.com/drive/folders/109-ZYZAHQU1YLQfVLDnpgT4MRX_CqINH?usp=sharing](link)
+
+
+# Citing Our Work
+When using this repository, please cite:
+
+@article{godahewa2020weekly,
+  title={Weekly Time Series Forecasting: A Strong Baseline},
+  author={Godahewa, Rakshitha and Bergmeir, Christoph and Webb, Geoff and Montero-Manso, Pablo},
+  year={2020}
+}
