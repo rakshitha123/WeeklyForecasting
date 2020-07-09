@@ -11,7 +11,7 @@ First obtain the RNN forecasts for your weekly dataset. The RNN code is availabl
 
 For that, you need to first preprocess your dataset separately for validation and testing phases. Create a folder named "datasets" in the parent level and place your datasets there.
 The R scripts in "./models/global_rnn/preprocess_scripts" folder show an example of preprocessing for the NN5 weekly dataset.
-Run the scripts named as "create_tfrecords.py" to convert the text data into a binary format. The generated tfrecords are used to train the RNN.
+After running the R scripts, run the scripts named as "create_tfrecords.py" to convert the text data into a binary format. The generated tfrecords are used to train the RNN.
 
 Add experiments into "./models/global_rnn/utility_scripts/execution_scripts/rnn_experiments.sh" script according to the format mentioned in the script and run experiments through that. Makesure to provide absolute paths for datasets.
 First get the RNN forecasts corresponding with the test phase using "generic_model_trainer.py" and then get the RNN forecasts for the validation phase using "optimized_trainer.py".
