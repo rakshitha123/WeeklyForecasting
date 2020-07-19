@@ -1,3 +1,5 @@
+# Use fourier terms to deal with seasonality
+
 library(forecast)
 
 # Define paths and initial variables

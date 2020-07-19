@@ -5,7 +5,8 @@ output_path = "../../../../datasets/preprocessed_data/"
 
 if not os.path.exists(output_path):
     os.makedirs(output_path)
-    
+
+# Change parameters accordingly for new datasets    
 if __name__ == '__main__':
     tfrecord_writer = TFRecordWriter(
         input_size = 20,
