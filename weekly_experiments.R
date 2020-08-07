@@ -105,13 +105,13 @@ do_forecasting <- function(training_set, forecast_horizon, dataset_name, optimal
 # use_features - Whether the series features should be used to train the lasso regression model
 # calculate_sub_model_forecasts - Whether the sub-models forecasts should be calculated or not. If you have already calculated the sub-model forecasts set this as FALSE and place the forecast files inside the FORECASTS_DIR with the name <dataset_name>_<method_name>_<phase>_forecasts.txt 
 # write_sub_model_forecasts - Whether the sub-model forecasts should be separately written into files. This will be useful when calculating the sub-model forecasts for the first time
+# feature_freqency - Frequency that should be used when calculating features. This should be set to 1 when calculating features for short series whose lengths are less than 2 seasonal cycles
 # integer_conversion - Whether the forecasts should be rounded or not
-# address_near_zero_instability - Whether the results can have zeros or not. This will be used when calculating smape
-# forecasts_to_be_replaced - If you want to replace some of the final forecasts with some set of new values, they should be provided here
+# address_near_zero_instability - Whether the results can have zeros or not. This will be used when calculating sMAPE
+# forecasts_to_be_replaced - If you want to replace some of the final forecasts with some set of new values, you can provide them here
 # replacable_row_indexes - The series indexes corresponding with the replacable forecasts provided using forecasts_to_be_replaced 
-# trainable_row_indexes - If you need to use consider only a set of series when training the lasso model, provide the required training series indexes with this parameter.
-#                         Useful with m4 weekly dataset as the feature calculation is only possible for a set of series. Only those series will be used when training the lasso model
-run_single_model_lasso_regression <- function(training_set_path, test_set_path, forecast_horizon, dataset_name, optimal_k_value, log_transformation = TRUE, use_features = FALSE, calculate_sub_model_forecasts = TRUE, write_sub_model_forecasts = TRUE, integer_conversion = FALSE, address_near_zero_instability = FALSE, forecasts_to_be_replaced = NULL, replacable_row_indexes = NULL, trainable_row_indexes = NULL){
+# trainable_row_indexes - If you need to consider only a set of series when training the lasso model, then provide the required training series indexes with this parameter.
+run_single_model_lasso_regression <- function(training_set_path, test_set_path, forecast_horizon, dataset_name, optimal_k_value, log_transformation = TRUE, use_features = FALSE, calculate_sub_model_forecasts = TRUE, write_sub_model_forecasts = TRUE, feature_freqency = SEASONALITY, integer_conversion = FALSE, address_near_zero_instability = FALSE, forecasts_to_be_replaced = NULL, replacable_row_indexes = NULL, trainable_row_indexes = NULL){
   
   output_file_name <- dataset_name
   
@@ -137,7 +137,7 @@ run_single_model_lasso_regression <- function(training_set_path, test_set_path, 
     
     print("Started calculating features")
     
-    feature_info <- calculate_features(training_set, forecast_horizon, SEASONALITY, NUM_OF_FEATURES)
+    feature_info <- calculate_features(training_set, forecast_horizon, feature_freqency, NUM_OF_FEATURES)
     feature_train_df <- feature_info[[1]]
     feature_test_df <- feature_info[[2]]
     
@@ -218,7 +218,7 @@ run_single_model_lasso_regression <- function(training_set_path, test_set_path, 
   # Rearrange forecasts into a matrix
   df_forecast[trainable_row_indexes,] <- matrix(converted_predictions, ncol = forecast_horizon, byrow = FALSE)
   
-  # Replace forecasts if required
+  # Replace forecasts if you want
   if(!is.null(forecasts_to_be_replaced) & !is.null(replacable_row_indexes))
     df_forecast[replacable_row_indexes,] <- data.matrix(forecasts_to_be_replaced, rownames.force = NA)
   
@@ -247,13 +247,13 @@ run_single_model_lasso_regression <- function(training_set_path, test_set_path, 
 # use_features - Whether the series features should be used to train the lasso regression model
 # calculate_sub_model_forecasts - Whether the sub-models forecasts should be calculated or not. If you have already calculated the sub-model forecasts set this as FALSE and place the forecast files inside the FORECASTS_DIR with the name <dataset_name>_<method_name>_<phase>_forecasts.txt 
 # write_sub_model_forecasts - Whether the sub-model forecasts should be separately written into files. This will be useful when calculating the sub-model forecasts for the first time
+# feature_freqency - Frequency that should be used when calculating features. This should be set to 1 when calculating features for short series whose lengths are less than 2 seasonal cycles
 # integer_conversion - Whether the forecasts should be rounded or not
-# address_near_zero_instability - Whether the results can have zeros or not. This will be used when calculating SMAPE
-# forecasts_to_be_replaced - If you want to replace some of the final forecasts with some set of new values, they should be provided here
+# address_near_zero_instability - Whether the results can have zeros or not. This will be used when calculating sMAPE
+# forecasts_to_be_replaced - If you want to replace some of the final forecasts with some set of new values, you can provide them here
 # replacable_row_indexes - The series indexes corresponding with the replacable forecasts provided using forecasts_to_be_replaced 
-# trainable_row_indexes - If you need to consider only a set of series when training the lasso model, provide the required training series indexes with this parameter
-#                         Useful with m4 weekly dataset as the feature calculation is only possible for a set of series. Only those series will be used when training the lasso model
-run_per_horizon_lasso_regression <- function(training_set_path, test_set_path, forecast_horizon, dataset_name, optimal_k_value, log_transformation = TRUE, use_features = FALSE, calculate_sub_model_forecasts = TRUE, write_sub_model_forecasts = TRUE, integer_conversion = FALSE, address_near_zero_instability = FALSE, forecasts_to_be_replaced = NULL, replacable_row_indexes = NULL, trainable_row_indexes = NULL){
+# trainable_row_indexes - If you need to consider only a set of series when training the lasso model, then provide the required training series indexes with this parameter
+run_per_horizon_lasso_regression <- function(training_set_path, test_set_path, forecast_horizon, dataset_name, optimal_k_value, log_transformation = TRUE, use_features = FALSE, calculate_sub_model_forecasts = TRUE, write_sub_model_forecasts = TRUE, feature_freqency = SEASONALITY, integer_conversion = FALSE, address_near_zero_instability = FALSE, forecasts_to_be_replaced = NULL, replacable_row_indexes = NULL, trainable_row_indexes = NULL){
   
   output_file_name <- dataset_name
   
@@ -276,7 +276,7 @@ run_per_horizon_lasso_regression <- function(training_set_path, test_set_path, f
     
     print("Started calculating features")
     
-    feature_info <- calculate_features(training_set, forecast_horizon, SEASONALITY, NUM_OF_FEATURES)
+    feature_info <- calculate_features(training_set, forecast_horizon, feature_freqency, NUM_OF_FEATURES)
     feature_train_df <- feature_info[[1]]
     feature_test_df <- feature_info[[2]]
     
@@ -358,7 +358,7 @@ run_per_horizon_lasso_regression <- function(training_set_path, test_set_path, f
     df_forecast[trainable_row_indexes, f] <- converted_predictions
   }
   
-  # Replace forecasts if required
+  # Replace forecasts if you want
   if(!is.null(forecasts_to_be_replaced) & !is.null(replacable_row_indexes)){
     df_forecast[replacable_row_indexes,] <- data.matrix(forecasts_to_be_replaced, rownames.force = NA)
   }
@@ -402,25 +402,12 @@ run_per_horizon_lasso_regression(file.path(BASE_DIR, "datasets", "ausgrid_weekly
 run_per_horizon_lasso_regression(file.path(BASE_DIR, "datasets", "ausgrid_weekly_dataset.txt"), file.path(BASE_DIR, "datasets", "ausgrid_weekly_results.txt"), 8, "ausgrid_weekly", optimal_k_value = 15, log_transformation = TRUE, use_features = FALSE, calculate_sub_model_forecasts = FALSE, write_sub_model_forecasts = FALSE)
 
 
-#Kaggle Web Traffic Weekly
-run_single_model_lasso_regression(file.path(BASE_DIR, "datasets", "kaggle_web_traffic_weekly_dataset.txt"), file.path(BASE_DIR, "datasets", "kaggle_web_traffic_weekly_results.txt"), 8, "kaggle_web_traffic_weekly", optimal_k_value = 5, log_transformation = TRUE, use_features = TRUE, calculate_sub_model_forecasts = TRUE, write_sub_model_forecasts = TRUE, address_near_zero_instability = TRUE, integer_conversion = TRUE)
-run_single_model_lasso_regression(file.path(BASE_DIR, "datasets", "kaggle_web_traffic_weekly_dataset.txt"), file.path(BASE_DIR, "datasets", "kaggle_web_traffic_weekly_results.txt"), 8, "kaggle_web_traffic_weekly", optimal_k_value = 5, log_transformation = FALSE, use_features = TRUE, calculate_sub_model_forecasts = FALSE, write_sub_model_forecasts = FALSE, address_near_zero_instability = TRUE, integer_conversion = TRUE)
-run_single_model_lasso_regression(file.path(BASE_DIR, "datasets", "kaggle_web_traffic_weekly_dataset.txt"), file.path(BASE_DIR, "datasets", "kaggle_web_traffic_weekly_results.txt"), 8, "kaggle_web_traffic_weekly", optimal_k_value = 5, log_transformation = TRUE, use_features = FALSE, calculate_sub_model_forecasts = FALSE, write_sub_model_forecasts = FALSE, address_near_zero_instability = TRUE, integer_conversion = TRUE)
+#San Fransico Traffic Weekly
+run_single_model_lasso_regression(file.path(BASE_DIR, "datasets", "traffic_weekly_dataset.txt"), file.path(BASE_DIR, "datasets", "traffic_weekly_results.txt"), 8, "traffic_weekly", optimal_k_value = 15, log_transformation = TRUE, use_features = TRUE, calculate_sub_model_forecasts = TRUE, write_sub_model_forecasts = TRUE, address_near_zero_instability = TRUE, feature_freqency = 1)
+run_single_model_lasso_regression(file.path(BASE_DIR, "datasets", "traffic_weekly_dataset.txt"), file.path(BASE_DIR, "datasets", "traffic_weekly_results.txt"), 8, "traffic_weekly", optimal_k_value = 15, log_transformation = FALSE, use_features = TRUE, calculate_sub_model_forecasts = FALSE, write_sub_model_forecasts = FALSE, address_near_zero_instability = TRUE, feature_freqency = 1)
+run_single_model_lasso_regression(file.path(BASE_DIR, "datasets", "traffic_weekly_dataset.txt"), file.path(BASE_DIR, "datasets", "traffic_weekly_results.txt"), 8, "traffic_weekly", optimal_k_value = 15, log_transformation = TRUE, use_features = FALSE, calculate_sub_model_forecasts = FALSE, write_sub_model_forecasts = FALSE, address_near_zero_instability = TRUE)
 
-run_per_horizon_lasso_regression(file.path(BASE_DIR, "datasets", "kaggle_web_traffic_weekly_dataset.txt"), file.path(BASE_DIR, "datasets", "kaggle_web_traffic_weekly_results.txt"), 8, "kaggle_web_traffic_weekly", optimal_k_value = 5, log_transformation = TRUE, use_features = TRUE, calculate_sub_model_forecasts = FALSE, write_sub_model_forecasts = FALSE, address_near_zero_instability = TRUE, integer_conversion = TRUE)
-run_per_horizon_lasso_regression(file.path(BASE_DIR, "datasets", "kaggle_web_traffic_weekly_dataset.txt"), file.path(BASE_DIR, "datasets", "kaggle_web_traffic_weekly_results.txt"), 8, "kaggle_web_traffic_weekly", optimal_k_value = 5, log_transformation = FALSE, use_features = TRUE, calculate_sub_model_forecasts = FALSE, write_sub_model_forecasts = FALSE, address_near_zero_instability = TRUE, integer_conversion = TRUE)
-run_per_horizon_lasso_regression(file.path(BASE_DIR, "datasets", "kaggle_web_traffic_weekly_dataset.txt"), file.path(BASE_DIR, "datasets", "kaggle_web_traffic_weekly_results.txt"), 8, "kaggle_web_traffic_weekly", optimal_k_value = 5, log_transformation = TRUE, use_features = FALSE, calculate_sub_model_forecasts = FALSE, write_sub_model_forecasts = FALSE, address_near_zero_instability = TRUE, integer_conversion = TRUE)
-
-
-#M4 Weekly
-snaive_forecasts <- read.csv(file.path(FORECASTS_DIR, "m4_weekly_snaive.txt"), header = FALSE)
-
-run_single_model_lasso_regression(file.path(BASE_DIR, "datasets", "m4_weekly_dataset.txt"), file.path(BASE_DIR, "datasets", "m4_weekly_results.txt"), 13, "m4_weekly", optimal_k_value = 15, log_transformation = TRUE, use_features = TRUE, calculate_sub_model_forecasts = TRUE, write_sub_model_forecasts = TRUE, forecasts_to_be_replaced = snaive_forecasts[295:359,], replacable_row_indexes = 295:359, trainable_row_indexes = 1:294)
-run_single_model_lasso_regression(file.path(BASE_DIR, "datasets", "m4_weekly_dataset.txt"), file.path(BASE_DIR, "datasets", "m4_weekly_results.txt"), 13, "m4_weekly", optimal_k_value = 15, log_transformation = FALSE, use_features = TRUE, calculate_sub_model_forecasts = FALSE, write_sub_model_forecasts = FALSE, forecasts_to_be_replaced = snaive_forecasts[295:359,], replacable_row_indexes = 295:359, trainable_row_indexes = 1:294)
-run_single_model_lasso_regression(file.path(BASE_DIR, "datasets", "m4_weekly_dataset.txt"), file.path(BASE_DIR, "datasets", "m4_weekly_results.txt"), 13, "m4_weekly", optimal_k_value = 15, log_transformation = TRUE, use_features = FALSE, calculate_sub_model_forecasts = FALSE, write_sub_model_forecasts = FALSE, forecasts_to_be_replaced = snaive_forecasts[295:359,], replacable_row_indexes = 295:359, trainable_row_indexes = 1:294)
-
-run_per_horizon_lasso_regression(file.path(BASE_DIR, "datasets", "m4_weekly_dataset.txt"), file.path(BASE_DIR, "datasets", "m4_weekly_results.txt"), 13, "m4_weekly", optimal_k_value = 15, log_transformation = TRUE, use_features = TRUE, calculate_sub_model_forecasts = FALSE, write_sub_model_forecasts = FALSE, forecasts_to_be_replaced = snaive_forecasts[295:359,], replacable_row_indexes = 295:359, trainable_row_indexes = 1:294)
-run_per_horizon_lasso_regression(file.path(BASE_DIR, "datasets", "m4_weekly_dataset.txt"), file.path(BASE_DIR, "datasets", "m4_weekly_results.txt"), 13, "m4_weekly", optimal_k_value = 15, log_transformation = FALSE, use_features = TRUE, calculate_sub_model_forecasts = FALSE, write_sub_model_forecasts = FALSE, forecasts_to_be_replaced = snaive_forecasts[295:359,], replacable_row_indexes = 295:359, trainable_row_indexes = 1:294)
-run_per_horizon_lasso_regression(file.path(BASE_DIR, "datasets", "m4_weekly_dataset.txt"), file.path(BASE_DIR, "datasets", "m4_weekly_results.txt"), 13, "m4_weekly", optimal_k_value = 15, log_transformation = TRUE, use_features = FALSE, calculate_sub_model_forecasts = FALSE, write_sub_model_forecasts = FALSE, forecasts_to_be_replaced = snaive_forecasts[295:359,], replacable_row_indexes = 295:359, trainable_row_indexes = 1:294)
-
+run_per_horizon_lasso_regression(file.path(BASE_DIR, "datasets", "traffic_weekly_dataset.txt"), file.path(BASE_DIR, "datasets", "traffic_weekly_results.txt"), 8, "traffic_weekly", optimal_k_value = 15, log_transformation = TRUE, use_features = TRUE, calculate_sub_model_forecasts = FALSE, write_sub_model_forecasts = FALSE, address_near_zero_instability = TRUE, feature_freqency = 1)
+run_per_horizon_lasso_regression(file.path(BASE_DIR, "datasets", "traffic_weekly_dataset.txt"), file.path(BASE_DIR, "datasets", "traffic_weekly_results.txt"), 8, "traffic_weekly", optimal_k_value = 15, log_transformation = FALSE, use_features = TRUE, calculate_sub_model_forecasts = FALSE, write_sub_model_forecasts = FALSE, address_near_zero_instability = TRUE, feature_freqency = 1)
+run_per_horizon_lasso_regression(file.path(BASE_DIR, "datasets", "traffic_weekly_dataset.txt"), file.path(BASE_DIR, "datasets", "traffic_weekly_results.txt"), 8, "traffic_weekly", optimal_k_value = 15, log_transformation = TRUE, use_features = FALSE, calculate_sub_model_forecasts = FALSE, write_sub_model_forecasts = FALSE, address_near_zero_instability = TRUE)
 
