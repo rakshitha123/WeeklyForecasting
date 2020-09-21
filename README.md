@@ -35,7 +35,7 @@ When using this repository, please cite:
 
 ```{r} 
 @article{godahewa2020weekly,
-  title={Weekly Time Series Forecasting: A Strong Baseline},
+  title={A Strong Baseline for Weekly Time Series Forecasting},
   author={Godahewa, Rakshitha and Bergmeir, Christoph and Webb, Geoff and Montero-Manso, Pablo},
   year={2020}
 }
