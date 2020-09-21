@@ -47,7 +47,7 @@ do_forecasting <- function(training_set, forecast_horizon, dataset_name, optimal
     print(i)
     
     time_series <- as.numeric(unlist(training_set[i], use.names = FALSE))
-   
+    
     training_forecasts[i,] <- tail(time_series, forecast_horizon)
     
     # The last set of values (equal to the forecast horizon) of each series are taken for validation
@@ -75,7 +75,7 @@ do_forecasting <- function(training_set, forecast_horizon, dataset_name, optimal
   for(method in METHODS){
     for(phase in PHASES){
       forecasts <- eval(parse(text = paste0(method, "_", phase, "_forecasts")))
-        
+      
       forecasts[forecasts < 0] <- 0
       
       # Round forecasts if required
@@ -111,7 +111,8 @@ do_forecasting <- function(training_set, forecast_horizon, dataset_name, optimal
 # forecasts_to_be_replaced - If you want to replace some of the final forecasts with some set of new values, you can provide them here
 # replacable_row_indexes - The series indexes corresponding with the replacable forecasts provided using forecasts_to_be_replaced 
 # trainable_row_indexes - If you need to consider only a set of series when training the lasso model, then provide the required training series indexes with this parameter.
-run_single_model_lasso_regression <- function(training_set_path, test_set_path, forecast_horizon, dataset_name, optimal_k_value, log_transformation = TRUE, use_features = FALSE, calculate_sub_model_forecasts = TRUE, write_sub_model_forecasts = TRUE, feature_freqency = SEASONALITY, integer_conversion = FALSE, address_near_zero_instability = FALSE, forecasts_to_be_replaced = NULL, replacable_row_indexes = NULL, trainable_row_indexes = NULL){
+# seasonality - Seasonality that should be used to calculate MASE
+run_single_model_lasso_regression <- function(training_set_path, test_set_path, forecast_horizon, dataset_name, optimal_k_value, log_transformation = TRUE, use_features = FALSE, calculate_sub_model_forecasts = TRUE, write_sub_model_forecasts = TRUE, feature_freqency = SEASONALITY, integer_conversion = FALSE, address_near_zero_instability = FALSE, forecasts_to_be_replaced = NULL, replacable_row_indexes = NULL, trainable_row_indexes = NULL, seasonality = SEASONALITY){
   
   output_file_name <- dataset_name
   
@@ -199,12 +200,13 @@ run_single_model_lasso_regression <- function(training_set_path, test_set_path, 
   # Find the best lambda value to be used with 10-fold cross validation
   print("Processing ensemble model")
   
-  lasso_cv <- glmnet:::cv.glmnet(full_train_df, train_y, alpha = 1, lambda = LAMBDAS_TO_TRY, standardize = TRUE, nfolds = 10)   
+  lasso_cv <- glmnet:::cv.glmnet(full_train_df, train_y, alpha = 1, lambda = LAMBDAS_TO_TRY, standardize = TRUE, nfolds = 10, lower.limits = rep(0, ncol(full_train_df)), upper.limits = rep(1, ncol(full_train_df)))   
   lambda_cv <- lasso_cv$lambda.min
   print(paste0("Optimised lambda = ", lambda_cv))
   
   # Train lasso regression model
-  final_model <- glmnet:::glmnet(full_train_df, train_y, alpha = 1, lambda = lambda_cv, standardize = TRUE)
+  final_model <- glmnet:::glmnet(full_train_df, train_y, alpha = 1, lambda = lambda_cv, standardize = TRUE, lower.limits = rep(0, ncol(full_train_df)), upper.limits = rep(1, ncol(full_train_df)))
+  print(coef(final_model))
   
   # Obtain predictions
   predictions <- predict(final_model, full_test_df)
@@ -232,7 +234,7 @@ run_single_model_lasso_regression <- function(training_set_path, test_set_path, 
   
   # Calculate errors
   print("Calculating errors")
-  calculate_errors(df_forecast, test_set, training_set, SEASONALITY, file.path(ERRORS_DIR, paste0(output_file_name, "_single_model"), fsep = "/"), address_near_zero_instability)
+  calculate_errors(df_forecast, test_set, training_set, seasonality, file.path(ERRORS_DIR, paste0(output_file_name, "_single_model"), fsep = "/"), address_near_zero_instability)
 }
 
 
@@ -253,7 +255,8 @@ run_single_model_lasso_regression <- function(training_set_path, test_set_path, 
 # forecasts_to_be_replaced - If you want to replace some of the final forecasts with some set of new values, you can provide them here
 # replacable_row_indexes - The series indexes corresponding with the replacable forecasts provided using forecasts_to_be_replaced 
 # trainable_row_indexes - If you need to consider only a set of series when training the lasso model, then provide the required training series indexes with this parameter
-run_per_horizon_lasso_regression <- function(training_set_path, test_set_path, forecast_horizon, dataset_name, optimal_k_value, log_transformation = TRUE, use_features = FALSE, calculate_sub_model_forecasts = TRUE, write_sub_model_forecasts = TRUE, feature_freqency = SEASONALITY, integer_conversion = FALSE, address_near_zero_instability = FALSE, forecasts_to_be_replaced = NULL, replacable_row_indexes = NULL, trainable_row_indexes = NULL){
+# seasonality - Seasonality that should be used to calculate MASE
+run_per_horizon_lasso_regression <- function(training_set_path, test_set_path, forecast_horizon, dataset_name, optimal_k_value, log_transformation = TRUE, use_features = FALSE, calculate_sub_model_forecasts = TRUE, write_sub_model_forecasts = TRUE, feature_freqency = SEASONALITY, integer_conversion = FALSE, address_near_zero_instability = FALSE, forecasts_to_be_replaced = NULL, replacable_row_indexes = NULL, trainable_row_indexes = NULL, seasonality = SEASONALITY){
   
   output_file_name <- dataset_name
   
@@ -339,12 +342,12 @@ run_per_horizon_lasso_regression <- function(training_set_path, test_set_path, f
     # Find the best lambda value to be used with 10-fold cross validation
     print(paste0("Processing ensemble model for horizon ", f))
     
-    lasso_cv <- glmnet:::cv.glmnet(full_train_df, train_y, alpha = 1, lambda = LAMBDAS_TO_TRY, standardize = TRUE, nfolds = 10)   
+    lasso_cv <- glmnet:::cv.glmnet(full_train_df, train_y, alpha = 1, lambda = LAMBDAS_TO_TRY, standardize = TRUE, nfolds = 10, lower.limits = rep(0, ncol(full_train_df)), upper.limits = rep(1, ncol(full_train_df)))   
     lambda_cv <- lasso_cv$lambda.min
     print(paste0("Optimised lambda for horizon ", f, " = ", lambda_cv))
     
     # Train lasso regression model
-    final_model <- glmnet:::glmnet(full_train_df, train_y, alpha = 1, lambda = lambda_cv, standardize = TRUE)
+    final_model <- glmnet:::glmnet(full_train_df, train_y, alpha = 1, lambda = lambda_cv, standardize = TRUE, lower.limits = rep(0, ncol(full_train_df)), upper.limits = rep(1, ncol(full_train_df)))
     
     # Obtain predictions
     predictions <- predict(final_model, full_test_df)
@@ -376,7 +379,7 @@ run_per_horizon_lasso_regression <- function(training_set_path, test_set_path, f
   
   # Calculate errors
   print("Calculating errors")
-  calculate_errors(df_forecast, test_set, training_set, SEASONALITY, file.path(ERRORS_DIR, paste0(output_file_name, "_per_horizon"), fsep = "/"), address_near_zero_instability)
+  calculate_errors(df_forecast, test_set, training_set, seasonality, file.path(ERRORS_DIR, paste0(output_file_name, "_per_horizon"), fsep = "/"), address_near_zero_instability)
 }
 
 
