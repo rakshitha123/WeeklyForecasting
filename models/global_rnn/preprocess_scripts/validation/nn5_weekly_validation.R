@@ -28,21 +28,21 @@ time_series_data <- unlist(df_train[1], use.names = FALSE)
 time_series_data <- as.numeric(time_series_data)
 fourier_terms <- fourier(ts(time_series_data, frequency = seasonality_period), K = k_val)
 
+OUTPUT_PATH <- paste(OUTPUT_DIR, output_file_prefix, sep = '/')
+OUTPUT_PATH <- paste(OUTPUT_PATH, max_forecast_horizon, sep = '')
+OUTPUT_PATH <- paste(OUTPUT_PATH, 'i', full_input_size, sep = '')
+OUTPUT_PATH <- paste(OUTPUT_PATH, 'v', sep = '')
+OUTPUT_PATH <- paste(OUTPUT_PATH, '_', phase, sep = '')
+OUTPUT_PATH <- paste(OUTPUT_PATH, 'txt', sep = '.')
+
 for (idr in 1 : length(df_train)) {
     print(idr)
-    OUTPUT_PATH <- paste(OUTPUT_DIR, output_file_prefix, sep = '/')
-    OUTPUT_PATH <- paste(OUTPUT_PATH, max_forecast_horizon, sep = '')
-    OUTPUT_PATH <- paste(OUTPUT_PATH, 'i', '20', sep = '')
-    OUTPUT_PATH <- paste(OUTPUT_PATH, 'v', sep = '')
-    OUTPUT_PATH <- paste(OUTPUT_PATH, '_', phase, sep = '')
-    OUTPUT_PATH <- paste(OUTPUT_PATH, 'txt', sep = '.')
-
     time_series_data <- unlist(df_train[idr], use.names = FALSE)
     time_series_data <- as.numeric(time_series_data)
     time_series_mean <- mean(time_series_data)
 
-     # Mean normalization
-    time_series_data <- time_series_data / (time_series_mean)
+    # Mean normalisation
+    time_series_data <- time_series_data / time_series_mean
 
     # Log Transformation
     time_series_log <- log(time_series_data)
@@ -73,7 +73,7 @@ for (idr in 1 : length(df_train)) {
         assign(paste0("seasonality_cos_windows_", (val + 1)), cos_windows)
     }
 
-    # Per-window normalization
+    # Per-window normalisation
     meanvalues <- rowMeans(input_windows)
     input_windows <- input_windows - meanvalues
     output_windows <- output_windows - meanvalues
