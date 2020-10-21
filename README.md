@@ -35,10 +35,11 @@ The experimental weekly datasets are available in the Google Drive folder at thi
 When using this repository, please cite:
 
 ```{r} 
-@article{godahewa2020weekly,
-  title={A Strong Baseline for Weekly Time Series Forecasting},
-  author={Godahewa, Rakshitha and Bergmeir, Christoph and Webb, Geoffrey I. and Montero-Manso, Pablo},
-  year={2020}
+@misc{godahewa2020weekly,
+  title = {A Strong Baseline for Weekly Time Series Forecasting},
+  author = {Godahewa, Rakshitha and Bergmeir, Christoph and Webb, Geoffrey I. and Montero-Manso, Pablo},
+  howPublished = {https://arxiv.org/abs/2010.08158},
+  year = {2020}
 }
 ```
 
