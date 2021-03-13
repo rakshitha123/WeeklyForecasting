@@ -9,7 +9,7 @@ This model uses the forecasts of 4 sub-models: TBATS, Theta, Dynamic Harmonic Re
 ## Obtain RNN Forecasts
 First obtain the RNN forecasts for your weekly dataset. The RNN code is available in ./models/global_rnn.
 
-For that, you need to first preprocess your dataset separately for validation and testing phases. Create a folder named "datasets" in the parent level and place your datasets there.
+For that, you need to first preprocess your dataset separately for validation and testing phases. Create a folder named "datasets" in the parent level and place your datasets and the corresponding results files there.
 The R scripts in "./models/global_rnn/preprocess_scripts" folder show examples of preprocessing for the NN5 weekly dataset (with fourier terms) and M4 weekly dataset (with seasonal lags).
 After running the R scripts, run the scripts named as "create_tfrecords.py" with the parameters corresponding with your dataset to convert the text data into a binary format. The generated tfrecords are used to train the RNN.
 
@@ -22,8 +22,8 @@ Create a folder named "results" at the parent level and create 2 sub-folders wit
 ## Execute the Proposed Baseline Model
 You can directly execute the exepriments related to the proposed baseline model, once you have obtained the RNN forecasts.
 The exepriments are executed using the functions implemented in "weekly_experiments.R". It will calculate the forecasts of the remaining 3 sub-models, optimally combine all sub-model forecasts using lasso regression and calculate errors for the generated forecasts.
-You can provide different options when executing models. E.g. training the lasso model with and without series features, transforming sub-model forecasts into log scale before training etc.
-The forecasts and errors provided by our lasso regression model will be stored into "./results/forecasts" and "./results/errors" folders respectively.
+You can provide different options when executing models. E.g. using different meta-learning algorithms to combine forecasts, using different base model pools, training the meta-learning models with and without series features, transforming sub-model forecasts into log scale before training etc.
+The forecasts and errors provided by our model will be stored into "./results/forecasts" and "./results/errors" folders respectively.
 See the examples provided in "weekly_experiments.R" file for more details.
 
 
