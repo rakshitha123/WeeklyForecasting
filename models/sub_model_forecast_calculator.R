@@ -48,7 +48,7 @@ get_dhr_arima_forecasts <- function(time_series, forecast_horizon, optimal_k_val
 # Retrieve the RNN forecasts corresponding with the given series identified by index
 get_rnn_forecasts <- function(forecast_path, index){
   tryCatch({
-    forecasts <- read.csv(forecast_path, header = FALSE)
+    forecasts <- read.csv(forecast_path, header = FALSE, sep = " ")
     as.numeric(forecasts[index,])
   }, error = function(e) {   
     warning(e)
@@ -57,7 +57,114 @@ get_rnn_forecasts <- function(forecast_path, index){
 }
 
 
+# Calculate holt forecasts
+get_holt_forecasts <- function(time_series, forecast_horizon){
+  tryCatch(
+    forecast(forecast:::holt(time_series, h = forecast_horizon))$mean
+    , error = function(e) {   
+      warning(e)
+      get_snaive_forecasts(time_series, forecast_horizon)
+    })
+}
+
+
+# Calculate simple exponential smoothing forecasts
+get_ses_forecasts <- function(time_series, forecast_horizon){
+  tryCatch(
+    forecast(forecast:::ses(time_series, h = forecast_horizon))$mean
+    , error = function(e) {   
+      warning(e)
+      get_snaive_forecasts(time_series, forecast_horizon)
+    })
+}
+
+
+# Calculate simple exponential smoothing forecasts
+get_es_forecasts <- function(time_series, forecast_horizon){
+  tryCatch(
+    smooth:::es(time_series, initial = "backcasting", h = forecast_horizon)$forecast
+    , error = function(e) {   
+      warning(e)
+      get_snaive_forecasts(time_series, forecast_horizon)
+    })
+}
+
+
+# Calculate croston forecasts
+get_croston_forecasts <- function(time_series, forecast_horizon){
+  tryCatch(
+    forecast(forecast:::croston(time_series, h = forecast_horizon))$mean
+    , error = function(e) {   
+      warning(e)
+      get_snaive_forecasts(time_series, forecast_horizon)
+    })
+}
+
+
+# Calculate ets forecasts
+get_ets_forecasts <- function(time_series, forecast_horizon){
+  tryCatch(
+    forecast(forecast:::ets(time_series, model = "AZN"), h = forecast_horizon)$mean
+    , error = function(e) {   
+      warning(e)
+      get_snaive_forecasts(time_series, forecast_horizon)
+    })
+}
+
+
+# Calculate arima forecasts
+get_arima_forecasts <- function(time_series, forecast_horizon){
+  tryCatch(
+    forecast(forecast::auto.arima(time_series, stepwise = FALSE, approximation = FALSE), h = forecast_horizon)$mean
+    , error = function(e) {   
+      warning(e)
+      get_snaive_forecasts(time_series, forecast_horizon)
+    })
+}
+
+
+# Calculate nnetar forecasts
+get_nnetar_forecasts <- function(time_series, forecast_horizon){
+  tryCatch(
+    forecast(forecast::nnetar(time_series), h = forecast_horizon)$mean
+    , error = function(e) {   
+      warning(e)
+      get_snaive_forecasts(time_series, forecast_horizon)
+    })
+}
+
+
+# Calculate stlmar forecasts
+get_stlmar_forecasts <- function(time_series, forecast_horizon){
+  model <- tryCatch({
+    forecast::stlm(time_series, modelfunction = stats::ar)
+  }, error = function(e) forecast::auto.arima(time_series, d = 0, D = 0))
+  forecast::forecast(model, h = forecast_horizon)$mean
+}
+
+
+# Calculate rw_drift forecasts
+get_rw_drift_forecasts <- function(time_series, forecast_horizon){
+  tryCatch(
+    forecast(forecast::rwf(time_series, drift = TRUE, h = length(time_series)), h = forecast_horizon)$mean
+    , error = function(e) {   
+      warning(e)
+      get_snaive_forecasts(time_series, forecast_horizon)
+    })
+}
+
+
+# Calculate naive forecasts
+get_naive_forecasts <- function(time_series, forecast_horizon){
+  forecast:::naive(time_series, h = forecast_horizon)$mean
+}
+
+
 # Calculate snaive forecasts
 get_snaive_forecasts <- function(time_series, forecast_horizon){
   forecast:::snaive(time_series, h = forecast_horizon)$mean
 }
+
+
+
+
