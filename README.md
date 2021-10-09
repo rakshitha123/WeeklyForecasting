@@ -26,6 +26,7 @@ You can provide different options when executing models. E.g. using different me
 The forecasts and errors provided by our model will be stored into "./results/forecasts" and "./results/errors" folders respectively.
 See the examples provided in "weekly_experiments.R" file for more details.
 
+Now you can also execute our proposed forecasting model using the R script, "./weekly_forecasting_model.R". First obtain the RNN forecasts as explained above. Then, you only have to change a set of parameters in the "./weekly_forecasting_model.R" script such as the name and path of your dataset and forecast horizon. The script will automatically provides the forecasts of our proposed weekly forecasting model.
 
 # Experimental Datasets
 The experimental weekly datasets are available in the Google Drive folder at this [link](https://drive.google.com/drive/folders/109-ZYZAHQU1YLQfVLDnpgT4MRX_CqINH?usp=sharing)
