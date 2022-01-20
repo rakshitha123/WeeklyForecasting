@@ -36,11 +36,12 @@ The experimental weekly datasets are available in the Google Drive folder at thi
 When using this repository, please cite:
 
 ```{r} 
-@misc{godahewa2020weekly,
-  title = {A Strong Baseline for Weekly Time Series Forecasting},
+@article{godahewa2022weekly,
+  title = {An Accurate and Fully-Automated Ensemble Model for Weekly Time Series Forecasting},
   author = {Godahewa, Rakshitha and Bergmeir, Christoph and Webb, Geoffrey I. and Montero-Manso, Pablo},
-  howPublished = {https://arxiv.org/abs/2010.08158},
-  year = {2020}
+  journal = {International Journal of Forecasting},
+  year = {2022},
+  note = {forthcoming}
 }
 ```
 
