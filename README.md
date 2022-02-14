@@ -9,7 +9,7 @@ This model uses the forecasts of 4 sub-models: TBATS, Theta, Dynamic Harmonic Re
 ## Obtain RNN Forecasts
 First obtain the RNN forecasts for your weekly dataset. The RNN code is available in ./models/global_rnn.
 
-For that, you need to first preprocess your dataset separately for validation and testing phases. Create a folder named "datasets" in the parent level and place your datasets and the corresponding results files there.
+For that, you need to first preprocess your dataset separately for validation and testing phases. Place your datasets and the corresponding results files in the "datasets" folder.
 The R scripts in "./models/global_rnn/preprocess_scripts" folder show examples of preprocessing for the NN5 weekly dataset (with fourier terms) and M4 weekly dataset (with seasonal lags).
 After running the R scripts, run the scripts named as "create_tfrecords.py" with the parameters corresponding with your dataset to convert the text data into a binary format. The generated tfrecords are used to train the RNN.
 
@@ -29,7 +29,7 @@ See the examples provided in "weekly_experiments.R" file for more details.
 Now you can also execute our proposed forecasting model using the R script, "./weekly_forecasting_model.R". First obtain the RNN forecasts as explained above. Then, you only have to change a set of parameters in the "./weekly_forecasting_model.R" script such as the name and path of your dataset and forecast horizon. The script will automatically provides the forecasts of our proposed weekly forecasting model.
 
 # Experimental Datasets
-The experimental weekly datasets are available in the Google Drive folder at this [link](https://drive.google.com/drive/folders/109-ZYZAHQU1YLQfVLDnpgT4MRX_CqINH?usp=sharing)
+The experimental weekly datasets are available in the "datasets" folder and in a Google Drive folder at this [link](https://drive.google.com/drive/folders/109-ZYZAHQU1YLQfVLDnpgT4MRX_CqINH?usp=sharing)
 
 
 # Citing Our Work
